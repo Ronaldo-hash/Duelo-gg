@@ -3,8 +3,8 @@ import { useAppStore } from '../../hooks/useAppStore';
 import { supabase } from '../../services/supabaseClient';
 
 interface SidebarProps {
-    activeTab: 'arena' | 'matches' | 'bank' | 'profile' | 'dev' | 'admin';
-    setActiveTab: (tab: 'arena' | 'matches' | 'bank' | 'profile' | 'dev' | 'admin') => void;
+    activeTab: 'arena' | 'matches' | 'bank' | 'profile' | 'dev' | 'admin' | 'clan';
+    setActiveTab: (tab: 'arena' | 'matches' | 'bank' | 'profile' | 'dev' | 'admin' | 'clan') => void;
 }
 
 const AdminLink = ({ activeTab, setActiveTab }: { activeTab: any, setActiveTab: any }) => {
@@ -64,7 +64,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
         <aside className="fixed left-0 top-0 bottom-0 w-72 bg-[#0F1523] border-r border-white/5 hidden lg:flex flex-col p-10 z-50">
             <div className="text-3xl font-black italic mb-16">DUELO<span className="text-[#C9A050]">GG</span></div>
             <nav className="space-y-4">
-                {['arena', 'matches', 'bank', 'profile'].map((tab) => (
+                {['arena', 'clan', 'matches', 'bank', 'profile'].map((tab) => (
                     <button
                         key={tab}
                         onClick={() => setActiveTab(tab as any)}
@@ -80,6 +80,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
                             {tab === 'arena' && (
                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="square" strokeLinejoin="miter" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                </svg>
+                            )}
+                            {tab === 'clan' && (
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="square" strokeLinejoin="miter" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                                 </svg>
                             )}
                             {tab === 'matches' && (

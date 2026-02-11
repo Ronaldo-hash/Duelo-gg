@@ -11,11 +11,12 @@ import { Profile } from './components/views/Profile';
 import { Admin } from './components/views/Admin';
 import { DevTools } from './components/views/DevTools';
 import { Lobby } from './components/views/Lobby'; // Import Lobby
+import { ClanPage } from './components/views/ClanPage'; // Import Clan
 import { NotificationToast } from './components/shared/NotificationToast';
 import { Auth } from './components/views/Auth';
 
 const DueloggApp: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'arena' | 'matches' | 'bank' | 'profile' | 'dev' | 'admin' | 'lobby'>('arena');
+  const [activeTab, setActiveTab] = useState<'arena' | 'matches' | 'bank' | 'profile' | 'dev' | 'admin' | 'lobby' | 'clan'>('arena');
   const [isProcessing, setIsProcessing] = useState(false);
   const [showScanner, setShowScanner] = useState(false);
   const [activeScannerMatchId, setActiveScannerMatchId] = useState<number | null>(null);
@@ -74,6 +75,7 @@ const DueloggApp: React.FC = () => {
           {activeTab === 'matches' && <Matches onRequestCamera={openScanner} onSelectMatch={handleNavigateToLobby} />}
           {activeTab === 'bank' && <Bank />}
           {activeTab === 'profile' && <Profile />}
+          {activeTab === 'clan' && <ClanPage />}
           {activeTab === 'dev' && <DevTools setLoading={setIsProcessing} />}
           {activeTab === 'admin' && <Admin />}
           {activeTab === 'lobby' && <Lobby matchId={selectedLobbyId} onBack={() => setActiveTab('arena')} />}
