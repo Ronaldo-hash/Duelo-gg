@@ -1,0 +1,8 @@
+
+{
+  "name": "DueloGG Architect & Foundation Generator",
+  "description": "A specialized tool for generating the foundational documentation and technical specifications for DueloGG, a P2P skill-based betting platform for Mobile Legends, ensuring legal compliance and robust financial architecture.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
