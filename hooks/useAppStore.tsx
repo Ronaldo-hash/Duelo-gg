@@ -85,9 +85,19 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
             })
             .subscribe();
 
+        // Listen for Realtime Match Players Updates (slots filling)
+        const matchPlayersChannel = supabase
+            .channel('public:match_players')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'match_players' }, (payload) => {
+                console.log('Realtime Player Update:', payload);
+                if (user?.id) fetchMatches(user.id); // Refresh to show new players
+            })
+            .subscribe();
+
         return () => {
             subscription.unsubscribe();
             supabase.removeChannel(matchDetails);
+            supabase.removeChannel(matchPlayersChannel);
         };
     }, [user?.id]);
 
@@ -213,7 +223,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
                         status: m.status,
                         creator_id: m.creator_id,
                         opponent_id: m.opponent_id,
-                        password: m.password
+                        password: m.password,
+                        team_name: m.team_name,
+                        team_logo: m.team_logo,
+                        match_players: m.match_players || []
                     };
                 });
                 setActiveMatches(formattedMatches);
@@ -386,21 +399,33 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
             setBalance(prev => prev - stake); // Optimistic
 
             // Insert into match_players
-            const { error: joinError } = await supabase.from('match_players').insert([{
+            const { data: insertedPlayer, error: joinError } = await supabase.from('match_players').insert([{
                 match_id: matchId,
                 user_id: user.id,
                 username: user.mlbb_id, // USE EXACT MLBB NICK
                 team_side: teamSide,
                 role: 'MEMBER',
                 status: 'PAID'
-            }]);
+            }]).select().single();
 
             if (joinError) throw joinError;
+
+            // Optimistic UI update — add player to local state immediately
+            setActiveMatches(prev => prev.map(m => {
+                if (m.id === matchId) {
+                    return {
+                        ...m,
+                        match_players: [...(m.match_players || []), insertedPlayer]
+                    };
+                }
+                return m;
+            }));
 
             // Deduct Balance
             await supabase.from('profiles').update({ balance: balance - stake }).eq('id', user.id);
 
             showNotification(`Entrou com o nick: ${user.mlbb_id}`, "success");
+            // Also do a full refresh to sync with server
             await fetchMatches();
             return true;
         } catch (error) {
