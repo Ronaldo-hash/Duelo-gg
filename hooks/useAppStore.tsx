@@ -388,10 +388,35 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
             return false;
         }
 
-        // Check if already joined
+        // Check if already joined (local state)
         const match = activeMatches.find(m => m.id === matchId);
         if (match?.match_players?.some(p => p.user_id === user.id)) {
             showNotification("Você já está nesta partida!", "warning");
+            return false;
+        }
+
+        // STRONG CHECK: Also verify against the database directly (prevents race conditions)
+        const { data: existingEntry } = await supabase
+            .from('match_players')
+            .select('id')
+            .eq('match_id', matchId)
+            .eq('user_id', user.id)
+            .maybeSingle();
+
+        if (existingEntry) {
+            showNotification("Você já está nesta partida!", "warning");
+            return false;
+        }
+
+        // Check if team is full (max 5 players per side)
+        const { data: teamPlayers } = await supabase
+            .from('match_players')
+            .select('id')
+            .eq('match_id', matchId)
+            .eq('team_side', teamSide);
+
+        if (teamPlayers && teamPlayers.length >= 5) {
+            showNotification("Este time já está completo!", "warning");
             return false;
         }
 
