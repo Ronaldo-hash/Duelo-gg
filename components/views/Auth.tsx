@@ -147,15 +147,6 @@ export const Auth: React.FC<AuthProps> = ({ onLogin }) => {
                         </button>
                     </div>
 
-                    <div className="mt-6 pt-6 border-t border-white/5">
-                        <button
-                            onClick={onLogin}
-                            className="w-full bg-slate-800 text-white font-bold py-3 rounded-xl text-xs hover:bg-slate-700 transition-all"
-                        >
-                            🎮 ENTRAR EM MODO DEMO
-                        </button>
-                        <p className="text-[8px] text-slate-600 text-center mt-2">Visualize o app sem autenticação</p>
-                    </div>
                 </div>
             </div>
         </div>
